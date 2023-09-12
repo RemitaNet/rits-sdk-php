@@ -1,16 +1,29 @@
 # Remita Interbank Transfer Service (RITs) PHP SDK
+
+---
+- [Overview](#Overview)
+- [Installation](#Installation)
+- [Usage](#Usage)
+- [Contributing](#Contributing)
+- [License](License)
+
+---
+
+## Overview
 This is the PHP SDK for the Remita Interbank Transfer Service.
 
-# Prerequisites
+### Prerequisites
 The workflow to getting started on RITs is as follows:
 Register a profile on Remita: You can visit Remita to sign-up if you are not already registered as a merchant/biller on the platform.
 Receive the Remita credentials that certify you as a Biller: SystemSpecs will send you your merchant ID and an API Key necessary to secure your handshake to the Remita platform.
 
-## Requirements
+### Requirements
 SDK works with PHP 5.7 or above.
 
-# Basic Usage
-## Configuration
+---
+
+## Usage
+### Configuration
 All merchant credentials needed to use RITs are being setup by instantiating the Credential Class and set the properties in this class accordingly. Properties such as MerchantId, ApiKey, ApiToken, Key, Iv and the Environment needs to be set.
 
 Note: Environment can either be $demoUrl or $liveUrl, each of this environment has it respective Credential. Ensure you set the right credentials. By default Environment is $demoUrl.
@@ -32,9 +45,11 @@ Note: Environment can either be $demoUrl or $liveUrl, each of this environment h
     
     RITsGatewayService::init($credentials);
  ```
-## CREDENTIALS
+
+### CREDENTIALS
 Before calling the RITs methods, the SDK needs to be initialized with the Credentials object, see below:
-### Credentials attributes
+
+#### Credentials attributes
 |Field  | Type    | Required   | Description   |   
 | ---   | ------  | -----------| -------- |   
 | $merchantId| String | Yes| SystemSpecs will send you your merchant ID necessary to secure your handshake to the Remita platform.
@@ -44,8 +59,8 @@ Before calling the RITs methods, the SDK needs to be initialized with the Creden
 | $key | String | Yes| SystemSpecs will provide a key required to encrypt your request data with AES to secure your handshake to the Remita platform.
 | $apiToken | String | Yes| SystemSpecs will send you your an API Token necessary to secure your handshake to the Remita platform.
 
-# METHODS
-## Adding Account(s)
+### METHODS
+#### Adding Account(s)
 Adding an account to your merchant profile on the RITs is a dual process.
 The first step is to AddAccount, Fields required to add account includes the following;
 accountNo: This is the number of the bank account being linked to merchant profile
@@ -58,13 +73,13 @@ $addAccountRequest->accountNo = "044332222";
 $addAccountRequest->bankCode = "044";
 $response = RITsGatewayService::addAccount($addAccountRequest);
  ```
-### $response attributes
+##### $response attributes
 | Name  | Type    | 
 | ---   | ------  | 
 | $status | String |
 | $data | Data |  
 
-### $data attributes
+##### $data attributes
 | Name  | Type    |
 | ---   | ------  | 
 | $remitaTransRef | String |
@@ -74,7 +89,7 @@ $response = RITsGatewayService::addAccount($addAccountRequest);
 | $responseDescription | String |
 | $mandateNumber | array(Objects) |
  
-### $authParams attributes
+##### $authParams attributes
 | Name  | Type    |
 | ---   | ------  | 
 | $description1 | String |
@@ -85,7 +100,7 @@ $response = RITsGatewayService::addAccount($addAccountRequest);
 | $param2 | String |
 Note: See 'TestRITSServices.php' in SDK on how to reference response data/attributes.
 
-## Validate Accounts
+#### Validate Accounts
 The second step validates the account holder via bank authentication on the account details. You will be required by your bank to validate the account details the AddAccount request is being issued for, required fields(Payloads) are as follow;
 card: This is the one of the authentication detail required by the bank from the account owner to validate AddAccount request
 otp: This is the another authentication detail required by the bank from the account owner to validate AddAccount request
@@ -121,13 +136,14 @@ requestId: This uniquely identifies the request
         ));
        $response = RITsGatewayService::validateAccountOTP($validateAccountOTPRequest);
 ```
-### $response attributes
+
+##### $response attributes
 | Name  | Type    | 
 | ---   | ------  | 
 | $status | String |
 | $data | Data |  
 
-### $data attributes
+##### $data attributes
 | Name  | Type    |
 | ---   | ------  | 
 | $remitaTransRef | String |
@@ -137,10 +153,10 @@ requestId: This uniquely identifies the request
 | $responseDescription | String |
 Note: See 'TestRITSServices.php' in SDK on how to reference response data/attributes.
 
-## Payments
+### Payments
 Payments on the RITs platform can only be made from Remita-identifiable accounts. This means that before an account can be debited on the RITs, it must be linked to a profile. Merchants may process payments via the following SDK methods on the platform:
 
-##Single Payment Request: 
+#### Single Payment Request: 
 This charges/debits a merchant’s account with a specified amount to credit a designated beneficiary account. Fields(payload) to set include:
 fromBank: This is the CBN code of the funding bank
 debitAccount: This is the funding account number
@@ -163,13 +179,14 @@ requestId: This uniquely identifies the request
         $paymentSingleRequest->beneficiaryEmail = "qa@test.com";
        $response = RITsGatewayService::singlePayment($paymentSingleRequest);
 ```
-### $response attributes
+
+##### $response attributes
 | Name  | Type    | 
 | ---   | ------  | 
 | $status | String |
 | $data | Data |  
 
-### $data attributes
+##### $data attributes
 | Name  | Type    |
 | ---   | ------  | 
 | $authorizationId | String |
@@ -183,7 +200,7 @@ requestId: This uniquely identifies the request
 | $data | array(undefined) |
 Note: See 'TestRITSServices.php' in SDK on how to reference response data/attributes.
 
-##Bulk Send Payment Request: 
+### Bulk Send Payment Request: 
 Here, a single amount is debited to credit multiple accounts across several banks. Fields(payload) to set include the bulkPaymentInfo Parameters and paymentDetails Parameters
 
 bulkPaymentInfo Payload
@@ -246,23 +263,24 @@ transRef: A unique reference that identifies a payment request. This reference c
 
 ```
 
-## Payment Request Status
+### Payment Request Status
 The payment request status method essentially retrieves the status of a previous payment request(Single payment and Bulk payment) using its transaction reference.
 
-##Single Payment Request Status:
+#### Single Payment Request Status:
 transRef: This should be the same transRef that was used for the single payment request
 
 ```php
 $transRef = "318187";
 $response = RITsGatewayService::paymentStatusSingle($transRef);
 ```
-### $response attributes
+
+##### $response attributes
 | Name  | Type    | 
 | ---   | ------  | 
 | $status | String |
 | $data | Data |  
 
-### $data attributes
+##### $data attributes
 | Name  | Type    |
 | ---   | ------  | 
 | $authorizationId | String |
@@ -287,13 +305,14 @@ batchRef: This should be the same batchRef that was used for the bulk payment re
 $batchRef = "13441234556";
 $response = RITsGatewayService::paymentStatusBulk($batchRef);
 ```
-### $response attributes
+
+##### $response attributes
 | Name  | Type    | 
 | ---   | ------  | 
 | $status | String |
 | $data | Data |  
 
-### $data attributes
+##### $data attributes
 | Name  | Type    |
 | ---   | ------  | 
 | $bulkRef | String |
@@ -301,7 +320,7 @@ $response = RITsGatewayService::paymentStatusBulk($batchRef);
 | $bulkPaymentStatusInfo | BulkPaymentStatusInfo |
 | $paymentDetails | array(PaymentDetails) |
 
-### $bulkPaymentStatusInfo attributes
+##### $bulkPaymentStatusInfo attributes
 | Name  | Type    |
 | ---   | ------  | 
 | $debitAccountToken | String |
@@ -314,7 +333,7 @@ $response = RITsGatewayService::paymentStatusBulk($batchRef);
 | $responseMessage | String |
 | $paymentState | String |
 
-### $paymentDetails attributes
+##### $paymentDetails attributes
 | Name  | Type    |
 | ---   | ------  | 
 | $transRef | String |
@@ -330,7 +349,7 @@ $response = RITsGatewayService::paymentStatusBulk($batchRef);
 | $responseMessage | String |
 Note: See 'TestRITSServices.php' in SDK on how to reference response data/attributes.
 
-## Account Enquiry
+#### Account Enquiry
 Account enquiry gets available information on a specific account, required fields(Payloads) are as follow;
    1. accountNo: Account number of tokenized account to be looked up.
    2. bankCode: The bank code where the account is domiciled. Use the Banks Enquiry method.
@@ -340,13 +359,13 @@ $accountEnquiry->accountNo = "044332222";
 $accountEnquiry->bankCode = "044";
 $response = RITsGatewayService::accountInquiry($accountEnquiry);
 ```
-### $response attributes
+##### $response attributes
 | Name  | Type    | 
 | ---   | ------  | 
 | $status | String |
 | $data | Data |  
 
-### $data attributes
+##### $data attributes
 | Name  | Type    |
 | ---   | ------  | 
 | $accountName | String |  
@@ -359,18 +378,18 @@ $response = RITsGatewayService::accountInquiry($accountEnquiry);
 | $email | array(undefined) |
 Note: See 'TestRITSServices.php' in SDK on how to reference response data/attributes.
 
-## Bank Enquiry
+#### Bank Enquiry
 This method lists the banks that are active on the RITs platform. 
 ```php
 $response = RITsGatewayService::activeBanks();
 ````
-### $response attributes
+##### $response attributes
 | Name  | Type    | 
 | ---   | ------  | 
 | $status | String |
 | $data | Data |  
 
-### $data attributes
+##### $data attributes
 | Name  | Type    |
 | ---   | ------  | 
 | $responseId | String |
@@ -378,7 +397,7 @@ $response = RITsGatewayService::activeBanks();
 | $responseDescription | String |
 | $banks | array(Banks) |
 
-### $banks attributes
+##### $banks attributes
 | Name  | Type    |
 | ---   | ------  | 
 | $bankCode | String |
@@ -387,10 +406,27 @@ $response = RITsGatewayService::activeBanks();
 | $type | String |
 Note: See 'TestRITSServices.php' in SDK on how to reference response data/attributes.
 
-
-## Useful links
-* Join our Slack Developer/Support channel at http://bit.ly/RemitaDevSlack
+### Useful links
+Join our Slack Developer/Support channel on [Slack.](http://bit.ly/RemitaDevSlack)
     
-## Support
-- For all other support needs, support@remita.net
-- To contribute to this repo, create an issue on what you intend to fix or update, make a PR and team will look into it and merge.
+### Support
+For all other support needs, support@remita.net
+
+---
+
+## Contributing
+To contribute to this repo, follow these guidelines for creating issues, proposing new features, and submitting pull requests:
+
+1. Fork the repository.
+2. Create a new branch: `git checkout -b "feature-name"`
+3. Make your changes and commit: `git commit -m "added some new features"`
+4. Push your changes: `git push origin feature-name`
+5. Submit a Pull Request (PR).
+
+Thank you!
+
+---
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
